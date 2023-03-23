@@ -45,9 +45,7 @@ class tree:
         self.eval, self.updatevals, self.isendstate = self.evalfunc(self.moves)
     def addnodes(self):
         self.nodes = [tree(self.currentplayer, 1 if self.simplayer == 2 else 2, self.evalfunc) if self.numcount[i] < 6 else None for i in range(7)]
-        #print(self.nodes)
         for i in range(7):
-            #print(i)
             if self.nodes[i] != None:
                 for t in range(len(self.numcount)):
                     self.nodes[i].numcount[t] = self.numcount[t]
@@ -84,7 +82,6 @@ class tree:
                         if max < UCB[i]:
                             max = UCB[i]
                             num = i
-               # print([node.isendstate if node != None else None for node in self.nodes])
                 try:
                     if self.nodes[num].searchnext() == False:
                         if all(node.isendstate == True for node in self.nodes):
@@ -101,7 +98,6 @@ class tree:
                         if min > UCB[i]:
                             min = UCB[i]
                             num = i
-                #print([node.isendstate if node != None else None for node in self.nodes])
                 try:
                     if self.nodes[num].searchnext() == False:
                         if all(node.isendstate == True for node in self.nodes):
@@ -123,6 +119,6 @@ class tree:
         return [node.eval for node in self.nodes]
 
 def cuttree(tree, move):
-    tree = tree.nodes[move]
-    tree.changeplayer()
-    return tree, tree.returnupdate()
+    newtree = tree.nodes[move]
+    newtree.changeplayer()
+    return newtree, newtree.returnupdate()

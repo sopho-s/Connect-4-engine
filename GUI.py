@@ -5,7 +5,6 @@ class board:
         self.board = [[0 for i in range(6)]for i in range(7)]
         self.moves = []
     def addcounter(self, column, colour):
-        #print(column)
         if self.board[column][5] == 0:
             self.board[column][5] = colour
             self.moves.append(column)

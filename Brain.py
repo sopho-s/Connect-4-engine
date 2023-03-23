@@ -14,7 +14,7 @@ def softmax(nums):
 def train():
     global network
     epochs = 1000 #int(input("How many epochs"))
-    evals = 1000 #int(input("How many evals per move"))
+    evals = 10 #int(input("How many evals per move"))
     alpha = 0.01#float(input("What do you want alpha to be"))
     loss = 0.99#float(input("What do you want loss to be"))
     gameboard = GUI.board()
@@ -30,6 +30,7 @@ def train():
             else:
                 player = 1
             for i in range(evals):
+                print(i)
                 treem.searchnext()
             eval = treem.getevals()
             percentages = softmax(eval)
@@ -39,7 +40,7 @@ def train():
             for i in range(7):
                 if choice >= cumper[i]:
                     gameboard.addcounter(i, player);
-                    tree, updates = mcs.cuttree(treem, i)
+                    treem, updates = mcs.cuttree(treem, i)
                     if len(updatestotal) == 0:
                         updatestotal = updates
                     else:
@@ -49,7 +50,6 @@ def train():
                             for s in range(len(updatestotal[0][t])):
                                 updatestotal[0][t][s] += updates[0][t][s]
                     break
-            print("hhelooeleo")
         network.updatelayers(updatestotal)
         with open("network.bin", "wb") as f:
             pickle.dump(network, f)
