@@ -39,13 +39,23 @@ class layer:
         for outindex in range(len(self.weights)):
             grad = self.derivative(self.prevouts[outindex])
             for inindex in range(len(self.weights[outindex])):
-                self.updatesw[outindex][inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * alpha * contribution[outindex]
-                newcontribution[inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * contribution[outindex]
+                try:
+                    self.updatesw[outindex][inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * alpha * contribution[outindex]
+                    newcontribution[inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * contribution[outindex]
+                except:
+                    print(inindex)
+                    print(outindex)
+                    print(self.updatesw)
+                    print(len(self.updatesw[0]))
+                    raise IndexError("hello bitch")
             self.updatesb[outindex] = grad * self.biases[outindex] * alpha * contribution[outindex]
         return newcontribution
     def updatevalues(self, updatesw, updatesb):
-        self.weights += updatesw
-        self.biases += updatesb
+        for i in range(len(self.weights)):
+            for t in range(len(self.weights[i])):
+                self.weights[i][t] += updatesw[i][t]
+        for i in range(len(updatesb)):
+            self.biases[i] += updatesb[i]
     def getupdatevals(self):
         return self.updatesw, self.updatesb
 
