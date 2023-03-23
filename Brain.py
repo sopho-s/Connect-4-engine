@@ -38,6 +38,7 @@ def train():
             choice = random.random()
             for i in range(7):
                 if choice >= cumper[i]:
+                    gameboard.addcounter(i, player);
                     tree, updates = mcs.cuttree(treem, i)
                     if len(updatestotal) == 0:
                         updatestotal = updates
@@ -47,6 +48,7 @@ def train():
                         for t in range(len(updatestotal[0])):
                             for s in range(len(updatestotal[0][t])):
                                 updatestotal[0][t][s] += updates[0][t][s]
+                    break
             print("hhelooeleo")
         network.updatelayers(updatestotal)
         with open("network.bin", "wb") as f:
