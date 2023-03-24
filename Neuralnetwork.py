@@ -39,15 +39,8 @@ class layer:
         for outindex in range(len(self.weights)):
             grad = self.derivative(self.prevouts[outindex])
             for inindex in range(len(self.weights[outindex])):
-                try:
-                    self.updatesw[outindex][inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * alpha * contribution[outindex]
-                    newcontribution[inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * contribution[outindex]
-                except:
-                    print(inindex)
-                    print(outindex)
-                    print(self.updatesw)
-                    print(len(self.updatesw[0]))
-                    raise IndexError("hello bitch")
+                self.updatesw[outindex][inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * alpha * contribution[outindex]
+                newcontribution[inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * contribution[outindex]
             self.updatesb[outindex] = grad * self.biases[outindex] * alpha * contribution[outindex]
         return newcontribution
     def updatevalues(self, updatesw, updatesb):
@@ -57,7 +50,9 @@ class layer:
         for i in range(len(updatesb)):
             self.biases[i] += updatesb[i]
     def getupdatevals(self):
-        return self.updatesw, self.updatesb
+        returnw = [[value for value in values] for values in self.updatesw]
+        returnb = [value for value in self.updatesb]
+        return returnw, returnb
 
 class noise:
     def __init__(self, alpha):
