@@ -86,7 +86,12 @@ class network:
         for i in range(len(self.layers)-1, -1, -1):
             contribution = self.layers[i].calcupdate(contribution, self.alpha)
         self.alpha = self.alpha * self.loss
-    def updatelayers(self, updatesvalsl):
+    def updatelayers(self, updatesvalsl, result):
         if len(updatesvalsl) != 0:
             for i in range(len(self.layers)):
+                for t in range(len(updatesvalsl[i][0])):
+                    for s in range(len(updatesvalsl[i][0][t])):
+                        updatesvalsl[i][0][t][s] = updatesvalsl[i][0][t][s] * result
+                for t in range(len(updatesvalsl[i][1])):
+                    updatesvalsl[i][1][t] = updatesvalsl[i][1][t] * result
                 self.layers[i].updatesvals(updatesvalsl[i][0], updatesvalsl[i][1])
