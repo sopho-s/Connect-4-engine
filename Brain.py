@@ -24,7 +24,9 @@ def train():
     for epoch in range(epochs):
         updatestotal = []
         print(epoch)
-        while not gameboard.check_four_in_a_row():
+        result = 0
+        isdraw = False
+        while not (gameboard.check_four_in_a_row() or isdraw):
             if player == 1:
                 player = 2
             else:
@@ -34,22 +36,35 @@ def train():
                 treem.searchnext()
             eval = treem.getevals()
             percentages = softmax(eval)
-            cumper = [sum(percentages[i:]) if i != 6 else 0 for i in range(7)]
+            cumper = [sum(percentages[i+1:]) if i != 6 else 0 for i in range(7)]
             print(cumper)
             choice = random.random()
+            chosen = False
             for i in range(7):
                 if choice >= cumper[i]:
-                    gameboard.addcounter(i, player);
-                    treem, updates = mcs.cuttree(treem, i)
-                    if len(updatestotal) == 0:
-                        updatestotal = updates
-                    else:
-                        for t in range(len(updatestotal[1])):
-                            updatestotal[1][t] += updates[1][t]
-                        for t in range(len(updatestotal[0])):
-                            for s in range(len(updatestotal[0][t])):
-                                updatestotal[0][t][s] += updates[0][t][s]
-                    break
+                    if(gameboard.addcounter(i, player)):
+                        treem, updates = mcs.cuttree(treem, i)
+                        if len(updatestotal) == 0:
+                            updatestotal = updates
+                        else:
+                            for t in range(len(updatestotal[1])):
+                                updatestotal[1][t] += updates[1][t]
+                            for t in range(len(updatestotal[0])):
+                                for s in range(len(updatestotal[0][t])):
+                                    updatestotal[0][t][s] += updates[0][t][s]
+                        chosen = True
+                        break
+            if chosen == False:
+                isdraw = True
+                result = 0
+            board = gameboard.getboard()
+            for row in board:
+                print(row)
+        if not isdraw:
+            if player == 1:
+                result = 1
+            else:
+                result = -1
         network.updatelayers(updatestotal)
         with open("network.bin", "wb") as f:
             pickle.dump(network, f)

@@ -12,6 +12,7 @@ class board:
                 if self.board[column][5-i] > 0 and self.board[column][4-i] == 0:
                     self.board[column][4-i] = self.board[column][5-i]
                     self.board[column][5-i] = 0
+            return True
         else:
             return False
     def getboard(self):
