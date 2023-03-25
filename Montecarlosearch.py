@@ -116,7 +116,7 @@ class tree:
     def returnupdate(self):
         return self.updatevals if self.currentplayer == 1 else self.switchsigns()
     def getevals(self):
-        return [node.eval for node in self.nodes]
+        return [node.eval if node != None else 0 for node in self.nodes]
 
 def cuttree(tree, move):
     newtree = tree.nodes[move]

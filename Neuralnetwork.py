@@ -94,4 +94,4 @@ class network:
                         updatesvalsl[i][0][t][s] = updatesvalsl[i][0][t][s] * result
                 for t in range(len(updatesvalsl[i][1])):
                     updatesvalsl[i][1][t] = updatesvalsl[i][1][t] * result
-                self.layers[i].updatesvals(updatesvalsl[i][0], updatesvalsl[i][1])
+                self.layers[i].updatevalues(updatesvalsl[i][0], updatesvalsl[i][1])

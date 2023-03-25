@@ -6,6 +6,7 @@ import math
 from itertools import chain
 import pickle
 import Montecarlosearch as mcs
+import dill
 
 
 def softmax(nums):
@@ -22,6 +23,7 @@ def train():
     player = 2
     treem = mcs.tree(1, 1, evalposition)
     for epoch in range(epochs):
+        gameboard.reset()
         updatestotal = []
         print(epoch)
         result = 0
@@ -65,9 +67,9 @@ def train():
                 result = 1
             else:
                 result = -1
-        network.updatelayers(updatestotal)
+        network.updatelayers(updatestotal, result)
         with open("network.bin", "wb") as f:
-            pickle.dump(network, f)
+            dill.dump(network, f)
 
 
 
