@@ -57,9 +57,9 @@ class tree:
                     self.nodes[i].simplayer = 2
                 else:
                     self.nodes[i].simplayer = 1
-                before = time.time()
+                #before = time.time()
                 self.nodes[i].evaluate()
-                print(int((time.time() - before)*1000)/1000)
+                #print(int((time.time() - before)*1000)/1000)
         self.updateeval()
     def searchnext(self):
         if len(self.nodes) == 0:

@@ -19,8 +19,12 @@ def train():
     alpha = 0.01#float(input("What do you want alpha to be"))
     loss = 0.99#float(input("What do you want loss to be"))
     gameboard = GUI.board()
-    network = nnn.network([nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6, 7*6*5), nnn.noise(0.001), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*5, 7*6*5), nnn.noise(0.001), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*5, 7*6*5), nnn.layer(nnn.sigmoid, nnn.sigmoidder, 7*6*5, 1)], alpha, loss)
     player = 2
+    try:
+        with open("network.bin", "rb") as f:
+            network = dill.load(network, f)
+    except:
+        network = nnn.network([nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6, 7*6*5), nnn.noise(0.001), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*5, 7*6*5), nnn.noise(0.001), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*5, 7*6*5), nnn.layer(nnn.sigmoid, nnn.sigmoidder, 7*6*5, 1)], alpha, loss)
     treem = mcs.tree(1, 1, evalposition)
     for epoch in range(epochs):
         gameboard.reset()
@@ -34,10 +38,12 @@ def train():
             else:
                 player = 1
             for i in range(evals):
-                print(i)
                 treem.searchnext()
             eval = treem.getevals()
-            percentages = softmax(eval)
+            if player == 1:
+                percentages = softmax(eval)
+            else:
+                percentages = softmax([1-ev for ev in eval])
             cumper = [sum(percentages[i+1:]) if i != 6 else 0 for i in range(7)]
             print(cumper)
             choice = random.random()
@@ -85,15 +91,19 @@ def evalposition(moves):
         else:
             player = 1
     board = gameboard.getboard()
-    #for row in board:
-    #    print(row)
-    board = list(chain.from_iterable(board))
-    eval = network.run(board)[0]
-    #print(eval)
-    #print("\n\n")
-    network.backprop([1])
-    vals = network.getupdatevals()
-    isend = gameboard.check_four_in_a_row()
+    isend = False
+    if gameboard.check_four_in_a_row():
+        isend = True
+        if player == 2:
+            eval = 1
+        else:
+            eval = 0
+        vals = None
+    else:
+        board = list(chain.from_iterable(board))
+        eval = network.run(board)[0]
+        network.backprop([1])
+        vals = network.getupdatevals()
     return eval, vals, isend
 
 
