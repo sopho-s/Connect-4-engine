@@ -15,18 +15,20 @@ def softmax(nums):
 def train():
     global network
     epochs = 1000 #int(input("How many epochs"))
-    evals = 10 #int(input("How many evals per move"))
+    evals = 1 #int(input("How many evals per move"))
     alpha = 0.01#float(input("What do you want alpha to be"))
     loss = 0.99#float(input("What do you want loss to be"))
     gameboard = GUI.board()
     player = 2
+    player1wins = 0
+    player2wins = 0
     try:
         with open("network.bin", "rb") as f:
             network = dill.load(network, f)
     except:
         network = nnn.network([nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6, 7*6*5), nnn.noise(0.001), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*5, 7*6*5), nnn.noise(0.001), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*5, 7*6*5), nnn.layer(nnn.sigmoid, nnn.sigmoidder, 7*6*5, 1)], alpha, loss)
-    treem = mcs.tree(1, 1, evalposition)
     for epoch in range(epochs):
+        treem = mcs.tree(1, 1, evalposition)
         gameboard.reset()
         updatestotal = []
         print(epoch)
@@ -52,14 +54,15 @@ def train():
                 if choice >= cumper[i]:
                     if(gameboard.addcounter(i, player)):
                         treem, updates = mcs.cuttree(treem, i)
-                        if len(updatestotal) == 0:
+                        if len(updatestotal) == 0 and updates != None:
                             updatestotal = updates
                         else:
-                            for t in range(len(updatestotal[1])):
-                                updatestotal[1][t] += updates[1][t]
-                            for t in range(len(updatestotal[0])):
-                                for s in range(len(updatestotal[0][t])):
-                                    updatestotal[0][t][s] += updates[0][t][s]
+                            if updates != None:
+                                for t in range(len(updatestotal[1])):
+                                    updatestotal[1][t] += updates[1][t]
+                                for t in range(len(updatestotal[0])):
+                                    for s in range(len(updatestotal[0][t])):
+                                        updatestotal[0][t][s] += updates[0][t][s]
                         chosen = True
                         break
             if chosen == False:
@@ -73,7 +76,13 @@ def train():
                 result = 1
             else:
                 result = -1
+        else:
+            result = 0
+        player1wins += result if result > 0 else 0
+        player2wins += -result if result < 0 else 0
         network.updatelayers(updatestotal, result)
+        print("player one has won: ", player1wins)
+        print("player two has won: ", player2wins)
         with open("network.bin", "wb") as f:
             dill.dump(network, f)
 

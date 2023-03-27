@@ -74,6 +74,7 @@ class tree:
                 if self.nodes[i] != None and not self.nodes[i].isendstate:
                     explorationval = self.explorationparm * math.sqrt((math.log(self.visits)) / self.nodes[i].visits)
                     UCB[i] = explorationval + self.nodes[i].eval
+            UCB = [3 - num for num in UCB]
             if self.currentplayer == self.simplayer:
                 max = 0
                 num = -1
@@ -107,11 +108,12 @@ class tree:
                     self.isendstate = True
                     return False
     def switchsigns(self):
-        for t in range(len(self.updatevals[1])):
-            self.updatevals[1][t] = self.updatevals[1][t] * -1
-        for t in range(len(self.updatevals[0])):
-            for s in range(len(self.updatevals[0][t])):
-                self.updatevals[0][t][s] = self.updatevals[0][t][s] * -1
+        if self.updatevals != None:
+            for t in range(len(self.updatevals[1])):
+                self.updatevals[1][t] = self.updatevals[1][t] * -1
+            for t in range(len(self.updatevals[0])):
+                for s in range(len(self.updatevals[0][t])):
+                    self.updatevals[0][t][s] = self.updatevals[0][t][s] * -1
         return self.updatevals
     def returnupdate(self):
         return self.updatevals if self.currentplayer == 1 else self.switchsigns()
