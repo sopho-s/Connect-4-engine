@@ -114,16 +114,8 @@ class tree:
                 except:
                     self.isendstate = True
                     return False
-    def switchsigns(self):
-        if self.updatevals != None:
-            for t in range(len(self.updatevals[1])):
-                self.updatevals[1][t] = self.updatevals[1][t] * -1
-            for t in range(len(self.updatevals[0])):
-                for s in range(len(self.updatevals[0][t])):
-                    self.updatevals[0][t][s] = self.updatevals[0][t][s] * -1
-        return self.updatevals
     def returnupdate(self):
-        return self.updatevals if self.currentplayer == 1 else self.switchsigns()
+        return self.updatevals
     def getevals(self):
         return [node.eval if node != None else 0 for node in self.nodes]
 

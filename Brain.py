@@ -49,8 +49,9 @@ def train():
             for i in range(evals):
                 treem.searchnext()
             eval = treem.getevals()
+            print(eval)
             for i in range(len(eval)):
-                eval[i] = eval[i] * 10
+                eval[i] = eval[i] * 30
             if player == 1:
                 percentages = softmax(eval)
             else:
@@ -64,6 +65,7 @@ def train():
                 for i in range(7):
                     if choice >= cumper[i]:
                         if gameboard.addcounter(i, player):
+                            print("board evaluation is ", '%.3g' % treem.eval)
                             treem, updates = mcs.cuttree(treem, i)
                             if len(updatestotal) == 0 and updates != None:
                                 updatestotal = updates
@@ -116,6 +118,10 @@ def evalposition(moves):
             eval = 1
         else:
             eval = 0
+        vals = None
+    elif calcdraw(board):
+        isend = True
+        eval = 0.5
         vals = None
     else:
         board = list(chain.from_iterable(board))
