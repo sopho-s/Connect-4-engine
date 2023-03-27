@@ -11,7 +11,14 @@ import dill
 
 def softmax(nums):
     return [math.exp(num) / sum([math.exp(num) for num in nums]) for num in nums]
-
+def calcdraw(board):
+    isdraw = True
+    for column in board:
+        for value in column:
+            if value == 0:
+                isdraw = False
+                break
+    return isdraw
 def train():
     global network
     epochs = 1000 #int(input("How many epochs"))
@@ -42,35 +49,37 @@ def train():
             for i in range(evals):
                 treem.searchnext()
             eval = treem.getevals()
+            for i in range(len(eval)):
+                eval[i] = eval[i] * 10
             if player == 1:
                 percentages = softmax(eval)
             else:
                 percentages = softmax([1-ev for ev in eval])
             cumper = [sum(percentages[i+1:]) if i != 6 else 0 for i in range(7)]
             print(cumper)
-            choice = random.random()
             chosen = False
-            for i in range(7):
-                if choice >= cumper[i]:
-                    if(gameboard.addcounter(i, player)):
-                        treem, updates = mcs.cuttree(treem, i)
-                        if len(updatestotal) == 0 and updates != None:
-                            updatestotal = updates
-                        else:
-                            if updates != None:
-                                for t in range(len(updatestotal[1])):
-                                    updatestotal[1][t] += updates[1][t]
-                                for t in range(len(updatestotal[0])):
-                                    for s in range(len(updatestotal[0][t])):
-                                        updatestotal[0][t][s] += updates[0][t][s]
-                        chosen = True
-                        break
-            if chosen == False:
-                isdraw = True
-                result = 0
+
+            while not chosen:
+                choice = random.random()
+                for i in range(7):
+                    if choice >= cumper[i]:
+                        if gameboard.addcounter(i, player):
+                            treem, updates = mcs.cuttree(treem, i)
+                            if len(updatestotal) == 0 and updates != None:
+                                updatestotal = updates
+                            else:
+                                if updates != None:
+                                    for t in range(len(updatestotal[1])):
+                                        updatestotal[1][t] += updates[1][t]
+                                    for t in range(len(updatestotal[0])):
+                                        for s in range(len(updatestotal[0][t])):
+                                            updatestotal[0][t][s] += updates[0][t][s]
+                            chosen = True
+                            break
             board = gameboard.getboard()
             for row in board:
                 print(row)
+            isdraw = calcdraw(board)
         if not isdraw:
             if player == 1:
                 result = 1

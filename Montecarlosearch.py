@@ -15,12 +15,11 @@ class tree:
         self.evalfunc = evaluate
         self.isendstate = False
     def updateeval(self):
-        if self.currentplayer == self.simplayer:
+        if self.simplayer == 2:
             total = []
             for node in self.nodes:
                 if node != None:
-                    if not node.isendstate:
-                        total.append(node.eval)
+                    total.append(node.eval)
                 else:
                     total.append(2)
             self.eval = min(total)
@@ -28,8 +27,7 @@ class tree:
             total = []
             for node in self.nodes:
                 if node != None:
-                    if not node.isendstate:
-                        total.append(node.eval)
+                    total.append(node.eval)
                 else:
                     total.append(-1)
             self.eval = max(total)
@@ -61,6 +59,32 @@ class tree:
                 self.nodes[i].evaluate()
                 #print(int((time.time() - before)*1000)/1000)
         self.updateeval()
+    def upperconfidencebound(self):
+        UCB = [None for _ in range(6)]
+        for i in range(6):
+            if self.nodes[i] != None and not self.nodes[i].isendstate:
+                explorationval = self.explorationparm * math.sqrt((math.log(self.visits)) / self.nodes[i].visits)
+                UCB[i] = explorationval + self.nodes[i].eval
+        return UCB
+    def minmax(self, ismax, values):
+        if ismax:
+            max = 0
+            num = -1
+            for i in range(len(values)):
+                if values[i] != None:
+                    if max < values[i]:
+                        max = values[i]
+                        num = i
+            return num
+        else:
+            min = 10
+            num = -1
+            for i in range(len(values)):
+                if values[i] != None:
+                    if min > values[i]:
+                        min = values[i]
+                        num = i
+            return num
     def searchnext(self):
         if len(self.nodes) == 0:
             self.addnodes()
@@ -69,20 +93,9 @@ class tree:
                 self.isendstate = True
                 return False
         else:
-            UCB = [None for _ in range(6)]
-            for i in range(6):
-                if self.nodes[i] != None and not self.nodes[i].isendstate:
-                    explorationval = self.explorationparm * math.sqrt((math.log(self.visits)) / self.nodes[i].visits)
-                    UCB[i] = explorationval + self.nodes[i].eval
-            UCB = [3 - num for num in UCB]
-            if self.currentplayer == self.simplayer:
-                max = 0
-                num = -1
-                for i in range(6):
-                    if UCB[i] != None:
-                        if max < UCB[i]:
-                            max = UCB[i]
-                            num = i
+            UCB = self.upperconfidencebound()
+            if self.simplayer == 1:
+                num = self.minmax(True, UCB)
                 try:
                     if self.nodes[num].searchnext() == False:
                         if all(node.isendstate == True for node in self.nodes):
@@ -92,13 +105,7 @@ class tree:
                     self.isendstate = True
                     return False
             else:
-                min = 10
-                num = -1
-                for i in range(6):
-                    if UCB[i] != None:
-                        if min > UCB[i]:
-                            min = UCB[i]
-                            num = i
+                num = self.minmax(False, UCB)
                 try:
                     if self.nodes[num].searchnext() == False:
                         if all(node.isendstate == True for node in self.nodes):
