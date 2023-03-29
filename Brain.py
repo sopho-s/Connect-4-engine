@@ -1,12 +1,13 @@
+import math
+import pickle
 import random
+from itertools import chain
+
+import dill
 
 import GUI
-import Neuralnetwork as nnn
-import math
-from itertools import chain
-import pickle
 import Montecarlosearch as mcs
-import dill
+import Neuralnetwork as nnn
 import Trainingdatavis as tdv
 
 
@@ -15,13 +16,13 @@ def softmax(nums):
 
 
 def calcdraw(board):
-    isdraw = True
+    is_draw = True
     for column in board:
         for value in column:
             if value == 0:
-                isdraw = False
+                is_draw = False
                 break
-    return isdraw
+    return is_draw
 
 
 def train():
@@ -56,16 +57,16 @@ def train():
         updatestotal = []
         print(epoch)
         evalss = []
-        isdraw = False
+        is_draw = False
         curveval = 0
-        while not (gameboard.check_four_in_a_row() or isdraw):
+        while not (gameboard.check_four_in_a_row() or is_draw):
             preveval = curveval
             if player == 1:
                 player = 2
             else:
                 player = 1
             for i in range(evals):
-                treem.searchnext()
+                treem.search_next()
             eval = treem.getevals()
             if player == 2:
                 eval = [1 - ev if ev is not None else 0 for ev in eval]
@@ -77,7 +78,6 @@ def train():
             cumper = [sum(percentages[i + 1:]) if i != 6 else 0 for i in range(7)]
             # print(cumper)
             chosen = False
-
             while not chosen:
                 choice = random.random()
                 for i in range(7):
@@ -101,8 +101,8 @@ def train():
             board = gameboard.getboard()
             # for row in board:
             #    print(row)
-            isdraw = calcdraw(board)
-        if not isdraw:
+            is_draw = calcdraw(board)
+        if not is_draw:
             if player == 1:
                 result = 1
             else:
@@ -132,16 +132,16 @@ def evalposition(moves):
             player = 1
         gameboard.addcounter(move, player)
     board = gameboard.getboard()
-    isend = False
+    is_end = False
     if gameboard.check_four_in_a_row():
-        isend = True
+        is_end = True
         if player == 2:
             eval = 0
         else:
             eval = 1
         vals = None
     elif calcdraw(board):
-        isend = True
+        is_end = True
         eval = 0.5
         vals = None
     else:
@@ -149,7 +149,7 @@ def evalposition(moves):
         eval = network.run(board)[0]
         network.backprop([1])
         vals = network.getupdatevals()
-    return eval, vals, isend
+    return eval, vals, is_end
 
 
 train()
