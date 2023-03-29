@@ -16,6 +16,12 @@ def softmax(nums):
 
 
 def calcdraw(board):
+    """
+    If there are any zeros in the board, then it's not a draw.
+
+    :param board: The board that we're checking for a win or draw
+    :return: the boolean value of is_draw.
+    """
     is_draw = True
     for column in board:
         for value in column:
@@ -26,6 +32,9 @@ def calcdraw(board):
 
 
 def train():
+    """
+    It trains the neural network by playing games against itself
+    """
     global network
     epochs = 10  # int(input("Epochs: "))
     evals = 4  # int(input("Evals per move: "))
