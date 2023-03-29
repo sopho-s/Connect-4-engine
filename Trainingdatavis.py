@@ -1,7 +1,10 @@
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import numpy as np
 import pickle
+
+import matplotlib.pyplot as plt
+
+
+
+
 
 class datavis:
     def __init__(self):
@@ -11,6 +14,7 @@ class datavis:
         self.evals = []
         self.evalbeforeend = []
         self.dwl = []
+
     def adddata(self, evalbeforeend, evals, playerwin):
         self.dwl.append(playerwin)
         self.evalbeforeend.append(evalbeforeend)
@@ -21,6 +25,7 @@ class datavis:
             self.player2wineval.append(evals)
         else:
             self.draweval.append(evals)
+
     def dwlshow(self):
         result = [0, 0, 0]
         for value in self.dwl:
@@ -35,8 +40,9 @@ class datavis:
         plt.rcParams["figure.autolayout"] = True
         plt.barh(["w/d/l"], [result[0]], height=1, color="green")
         plt.barh(["w/d/l"], [result[1]], height=1, left=[result[0]], color="yellow")
-        plt.barh(["w/d/l"], [result[2]], height=1, left=[result[0]+result[1]], color="red")
+        plt.barh(["w/d/l"], [result[2]], height=1, left=[result[0] + result[1]], color="red")
         plt.show()
+
     def evalbeforeshow(self):
         fig, axs = plt.subplots(3, 1, sharex=True)
         fig.subplots_adjust(hspace=0)
@@ -55,6 +61,7 @@ class datavis:
         axs[2].plot(player2)
         plt.show()
 
+
 def loadandtest():
     datav = datavis()
     with open("datavis.bin", "rb") as f:
@@ -62,8 +69,9 @@ def loadandtest():
     datav.dwlshow()
     datav.evalbeforeshow()
 
+
 try:
     with open("datavis.bin", "rb") as f:
-        pass # File exists
-except FileNotFoundError:
-    loadandtest() # File does not exist, create it
+        datav = pickle.load(f)
+except:
+    loadandtest()
