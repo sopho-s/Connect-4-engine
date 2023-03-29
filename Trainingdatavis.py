@@ -62,5 +62,8 @@ def loadandtest():
     datav.dwlshow()
     datav.evalbeforeshow()
 
-if __name__ == "__main__":
-    loadandtest()
+try:
+    with open("datavis.bin", "rb") as f:
+        pass # File exists
+except FileNotFoundError:
+    loadandtest() # File does not exist, create it
