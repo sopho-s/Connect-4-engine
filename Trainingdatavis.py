@@ -61,4 +61,9 @@ def loadandtest():
         datav = pickle.load(f)
     datav.dwlshow()
     datav.evalbeforeshow()
-loadandtest()
+
+try:
+    with open("datavis.bin", "rb") as f:
+        pass # File exists
+except FileNotFoundError:
+    loadandtest() # File does not exist, create it
