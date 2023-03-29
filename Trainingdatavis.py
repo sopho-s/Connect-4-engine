@@ -61,4 +61,6 @@ def loadandtest():
         datav = pickle.load(f)
     datav.dwlshow()
     datav.evalbeforeshow()
-loadandtest()
+
+if __name__ == "__main__":
+    loadandtest()
