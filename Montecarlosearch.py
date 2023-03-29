@@ -51,10 +51,6 @@ class tree:
                 for move in self.moves:
                     self.nodes[i].moves.append(move)
                 self.nodes[i].moves.append(i)
-                if self.simplayer == 1:
-                    self.nodes[i].simplayer = 2
-                else:
-                    self.nodes[i].simplayer = 1
                 #before = time.time()
                 self.nodes[i].evaluate()
                 #print(int((time.time() - before)*1000)/1000)
@@ -117,7 +113,7 @@ class tree:
     def returnupdate(self):
         return self.updatevals
     def getevals(self):
-        return [node.eval if node != None else 0 for node in self.nodes]
+        return [node.eval if node != None else None for node in self.nodes]
 
 def cuttree(tree, move):
     newtree = tree.nodes[move]

@@ -11,13 +11,15 @@ relu = lambda x: x if x > 0 else 0
 reluder = lambda x: 1 if x > 0 else 0
 leakyrelu = lambda x: x if x > 0 else x*0.01
 leakyreluder = lambda x: 1 if x > 0 else 0.01
+swish = lambda x: x/(1+math.exp(-x))
+swishder = lambda x: (math.exp(x)*(math.exp(x) + x + 1))/((math.exp(x) + 1)**2)
 
 class layer:
     def __init__(self, activation, activationder, inputam, outputam):
         self.activation = activation
         self.derivative = activationder
-        self.weights = [[random.random() / 100 for _ in range(inputam)] for _ in range(outputam)]
-        self.biases = [random.random() / 100 for _ in range(outputam)]
+        self.weights = [[random.random() / 5 - 1 / 10 for _ in range(inputam)] for _ in range(outputam)]
+        self.biases = [random.random() / 5 - 1 / 10 for _ in range(outputam)]
         self.input = []
         self.outputs = [0 for i in range(len(self.biases))]
         self.prevouts = [0 for i in range(len(self.biases))]
