@@ -7,6 +7,14 @@ class board:
         self.moves = []
 
     def addcounter(self, column, colour):
+        """
+        It checks if the column is full, if it isn't, it adds a counter to the top of the column and then checks if any
+        counters need to be moved down
+
+        :param column: the column you want to add a counter to
+        :param colour: 1 for red, 2 for yellow
+        :return: a boolean value.
+        """
         if self.board[column][5] == 0:
             self.board[column][5] = colour
             self.moves.append(column)
@@ -29,6 +37,10 @@ class board:
         self.moves = []
 
     def getrects(self):
+        """
+        It takes the board, and returns a list of tuples, each tuple containing a color and a rectangle
+        :return: A list of lists. Each list contains a tuple of RGB values and a pygame.Rect object.
+        """
         rectboard = []
         for i in range(7):
             for t in range(6):
@@ -38,7 +50,12 @@ class board:
         return rectboard
 
     def check_horizontal(self, board):
-        # Check for horizontal 4 in a row
+        """
+        For each row in the board, check if the first four elements are the same and not equal to zero
+
+        :param board: The current board state
+        :return: a boolean value.
+        """
         for row in board:
             for i in range(len(row) - 3):
                 if row[i] == row[i + 1] == row[i + 2] == row[i + 3] and row[i] != 0:
@@ -46,7 +63,13 @@ class board:
         return False
 
     def check_vertical(self, board):
-        # Check for vertical 4 in a row
+        """
+        We iterate through the columns of the board and check if the four consecutive values in the column are equal and not
+        zero
+
+        :param board: the current board
+        :return: a boolean value.
+        """
         for i in range(len(board[0])):
             for j in range(len(board) - 3):
                 if board[j][i] == board[j + 1][i] == board[j + 2][i] == board[j + 3][i] and board[j][i] != 0:
@@ -54,6 +77,12 @@ class board:
         return False
 
     def check_diagonal_top_left_to_bottom_right(self, board):
+        """
+        We iterate through the board, checking if the current position is equal to the next 3 positions in the diagonal
+
+        :param board: The current state of the board
+        :return: a boolean value.
+        """
         # Check for diagonal 4 in a row (top-left to bottom-right)
         for i in range(len(board[0]) - 3):
             for j in range(len(board) - 3):
@@ -63,6 +92,14 @@ class board:
         return False
 
     def check_diagonal_bottom_left_to_top_right(self, board):
+        """
+        We iterate through the board, starting at the bottom left corner, and check if the current position, the position
+        above and to the right, the position above and two to the right, and the position above and three to the right are
+        all the same and not 0
+
+        :param board: The game board
+        :return: a boolean value.
+        """
         # Check for diagonal 4 in a row (bottom-left to top-right)
         for i in range(len(board[0]) - 3):
             for j in range(3, len(board)):
@@ -72,7 +109,10 @@ class board:
         return False
 
     def check_four_in_a_row(self):
-        # Check for horizontal, vertical, and diagonal 4 in a row
+        """
+        If there is a horizontal, vertical, or diagonal 4 in a row, return True. Otherwise, return False
+        :return: a boolean value.
+        """
         if self.check_horizontal(self.board) or self.check_vertical(
                 self.board) or self.check_diagonal_top_left_to_bottom_right(
             self.board) or self.check_diagonal_bottom_left_to_top_right(self.board):
@@ -88,6 +128,10 @@ def user_click():
 
 
 def main():
+    """
+    It creates a gameboard object, initialises pygame, and then runs a loop that checks for a mouse click, adds a counter to
+    the gameboard, and then checks if the game is over.
+    """
     player = 1
     gameboard = board()
     pygame.init()

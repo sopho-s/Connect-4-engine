@@ -3,6 +3,9 @@ import pickle
 import matplotlib.pyplot as plt
 
 
+
+
+
 class datavis:
     def __init__(self):
         self.player1wineval = []

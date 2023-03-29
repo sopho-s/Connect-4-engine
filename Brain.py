@@ -27,10 +27,10 @@ def calcdraw(board):
 
 def train():
     global network
-    epochs = 10  # int(input("How many epochs"))
-    evals = 4  # int(input("How many evals per move"))
-    alpha = 2  # float(input("What do you want alpha to be"))
-    loss = 0.99  # float(input("What do you want loss to be"))
+    epochs = 10  # int(input("Epochs: "))
+    evals = 4  # int(input("Evals per move: "))
+    alpha = 2  # float(input("Alpha: "))
+    loss = 0.99  # float(input("Loss value: "))
     gameboard = GUI.board()
     player1wins = 0
     player2wins = 0
