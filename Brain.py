@@ -9,8 +9,11 @@ import Montecarlosearch as mcs
 import dill
 import Trainingdatavis as tdv
 
+
 def softmax(nums):
     return [math.exp(num) / sum([math.exp(num) for num in nums]) for num in nums]
+
+
 def calcdraw(board):
     isdraw = True
     for column in board:
@@ -19,12 +22,14 @@ def calcdraw(board):
                 isdraw = False
                 break
     return isdraw
+
+
 def train():
     global network
-    epochs = 1000 #int(input("How many epochs"))
-    evals = 4 #int(input("How many evals per move"))
-    alpha = 2#float(input("What do you want alpha to be"))
-    loss = 0.99#float(input("What do you want loss to be"))
+    epochs = 10  # int(input("How many epochs"))
+    evals = 4  # int(input("How many evals per move"))
+    alpha = 2  # float(input("What do you want alpha to be"))
+    loss = 0.99  # float(input("What do you want loss to be"))
     gameboard = GUI.board()
     player1wins = 0
     player2wins = 0
@@ -33,7 +38,12 @@ def train():
         with open("network.bin", "rb") as f:
             network = dill.load(network, f)
     except:
-        network = nnn.network([nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6, 7*6*2), nnn.noise(0.01), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*2, 7*6*2), nnn.noise(0.01), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*2, 7*6*2), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*2, 7*6*2), nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7*6*2, 7*6*2), nnn.layer(nnn.sigmoid, nnn.sigmoidder, 7*6*2, 1)], alpha, loss)
+        network = nnn.network([nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7 * 6, 7 * 6 * 2), nnn.noise(0.01),
+                               nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7 * 6 * 2, 7 * 6 * 2), nnn.noise(0.01),
+                               nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7 * 6 * 2, 7 * 6 * 2),
+                               nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7 * 6 * 2, 7 * 6 * 2),
+                               nnn.layer(nnn.leakyrelu, nnn.leakyreluder, 7 * 6 * 2, 7 * 6 * 2),
+                               nnn.layer(nnn.sigmoid, nnn.sigmoidder, 7 * 6 * 2, 1)], alpha, loss)
     try:
         with open("datavis.bin", "rb") as f:
             datavis = pickle.load(f)
@@ -58,14 +68,14 @@ def train():
                 treem.searchnext()
             eval = treem.getevals()
             if player == 2:
-                eval = [1-ev if ev != None else 0 for ev in eval]
+                eval = [1 - ev if ev is not None else 0 for ev in eval]
             else:
-                eval = [ev if ev != None else 0 for ev in eval]
+                eval = [ev if ev is not None else 0 for ev in eval]
             for i in range(len(eval)):
                 eval[i] = eval[i] * 30
             percentages = softmax(eval)
-            cumper = [sum(percentages[i+1:]) if i != 6 else 0 for i in range(7)]
-            #print(cumper)
+            cumper = [sum(percentages[i + 1:]) if i != 6 else 0 for i in range(7)]
+            # print(cumper)
             chosen = False
 
             while not chosen:
@@ -73,14 +83,14 @@ def train():
                 for i in range(7):
                     if choice >= cumper[i]:
                         if gameboard.addcounter(i, player):
-                            #print("board evaluation is ", '%.3g' % treem.eval)
+                            # print("board evaluation is ", '%.3g' % treem.eval)
                             curveval = treem.eval
                             evalss.append(treem.eval)
                             treem, updates = mcs.cuttree(treem, i)
-                            if len(updatestotal) == 0 and updates != None:
+                            if len(updatestotal) == 0 and updates is not None:
                                 updatestotal = updates
                             else:
-                                if updates != None:
+                                if updates is not None:
                                     for t in range(len(updatestotal[1])):
                                         updatestotal[1][t] += updates[1][t]
                                     for t in range(len(updatestotal[0])):
@@ -89,7 +99,7 @@ def train():
                             chosen = True
                             break
             board = gameboard.getboard()
-            #for row in board:
+            # for row in board:
             #    print(row)
             isdraw = calcdraw(board)
         if not isdraw:
@@ -109,8 +119,6 @@ def train():
             dill.dump(network, f)
         with open("datavis.bin", "wb") as f:
             pickle.dump(datavis, f)
-
-
 
 
 def evalposition(moves):
