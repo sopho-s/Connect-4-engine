@@ -22,9 +22,9 @@ def calcdraw(board):
     return isdraw
 def train():
     global network
-    epochs = 1000#int(input("How many epochs"))
-    evals = 8#int(input("How many evals per move"))
-    alpha = 10#float(input("What do you want alpha to be"))
+    epochs = 10000#int(input("How many epochs"))
+    evals = 100#int(input("How many evals per move"))
+    alpha = 1#float(input("What do you want alpha to be"))
     loss = 0.99#float(input("What do you want loss to be"))
     gameboard = GUI.board()
     player1wins = 0
@@ -34,7 +34,7 @@ def train():
         with open("network.bin", "rb") as f:
             network = dill.load(f)
     except:
-        network = nnn.network([nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.noise(0.01), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.noise(0.01), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6), nnn.layer(nnn.sigmoid, nnn.sigmoidder, 7*6, 1)], alpha, loss)
+        network = nnn.network([nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6, 0.1), nnn.noise(0.01), nnn.layer(nnn.swish, nnn.swishder, 7*6, 7*6, 0.1), nnn.noise(0.01), nnn.layer(nnn.sigmoid, nnn.sigmoidder, 7*6, 1, 0.1)], alpha, loss)
     try:
         with open("datavis.bin", "rb") as f:
             datavis = pickle.load(f)
@@ -112,7 +112,7 @@ def train():
 def play():
     global network
     player = 1
-    evals = 100
+    evals = 200
     gameboard = GUI.board()
     treem = mcs.tree(1, 1, evalposition)
     gameboard.reset()
@@ -143,31 +143,23 @@ def play():
                 for i in range(len(eval)):
                     eval[i] = eval[i] * 30
                 chosen = False
+                notchooselist = []
                 while not chosen:
                     max = 0
                     t = 0
                     index = 0
                     for value in eval:
-                        if max < value:
+                        if max < value and not index in notchooselist:
                             index = t
                             max = value
                         t += 1
                     if gameboard.addcounter(index, player):
-                        count = 0
-                        print(treem.upperconfidencebound())
-                        print("\n\n\n")
-                        print(treem.minmax(True, treem.upperconfidencebound()))
-                        for t in treem.nodes:
-                            try:
-                                print(count, ":")
-                                print(t.eval)
-                                print(treem.explorationparm * math.sqrt((math.log(treem.visits)) /t.visits))
-                                count += 1
-                            except:
-                                pass
+                        print(6-index)
+                        print(treem.eval)
                         print("\n\n\n")
                         treem, updates = mcs.cuttree(treem, index)
                         chosen = True
+                    notchooselist.append(index)
                 if player == 1:
                     player = 2
                 else:
@@ -194,9 +186,9 @@ def play():
                                     player = 2
                                 else:
                                     player = 1
-                                running = not gameboard.check_four_in_a_row()
             board = gameboard.getboard()
             isdraw = calcdraw(board)
+        running = False
 
 
 def evalposition(moves):

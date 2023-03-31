@@ -17,10 +17,10 @@ swishder = lambda x: (math.exp(x) * (math.exp(x) + x + 1)) / ((math.exp(x) + 1) 
 
 
 class layer:
-    def __init__(self, activation, activationder, inputam, outputam):
+    def __init__(self, activation, activationder, inputam, outputam, momentum):
         self.activation = activation
         self.derivative = activationder
-        self.weights = [[random.random() / 5 - 1 / 10 for _ in range(inputam)] for _ in range(outputam)]
+        self.weights = [[random.random() / 2 - 1 / 4 for _ in range(inputam)] for _ in range(outputam)]
         self.biases = [random.random() / 5 - 1 / 10 for _ in range(outputam)]
         self.input = []
         self.outputs = [0 for _ in range(len(self.biases))]
@@ -28,6 +28,7 @@ class layer:
         self.previns = [0 for _ in range(inputam)]
         self.updatesw = [[0 for _ in range(inputam)] for _ in range(outputam)]
         self.updatesb = [0 for _ in range(outputam)]
+        self.momentum = momentum
 
     def forwardpass(self, inputs):
         self.previns = inputs
@@ -45,11 +46,11 @@ class layer:
         for outindex in range(len(self.weights)):
             grad = self.derivative(self.prevouts[outindex])
             for inindex in range(len(self.weights[outindex])):
-                self.updatesw[outindex][inindex] = grad * self.weights[outindex][inindex] * self.previns[
+                self.updatesw[outindex][inindex] = self.updatesw[outindex][inindex] / self.momentum + grad * self.weights[outindex][inindex] * self.previns[
                     inindex] * alpha * contribution[outindex]
                 newcontribution[inindex] = grad * self.weights[outindex][inindex] * self.previns[inindex] * \
                                            contribution[outindex]
-            self.updatesb[outindex] = grad * self.biases[outindex] * alpha * contribution[outindex]
+            self.updatesb[outindex] = self.updatesb[outindex] / self.momentum + grad * self.biases[outindex] * alpha * contribution[outindex]
         return newcontribution
 
     def updatevalues(self, updatesw, updatesb):
